@@ -1,0 +1,10 @@
+basicauth:
+  config:
+    - username: admin
+      role: ADMIN
+      password: adminpwd
+    - username: user
+      role: USER
+      password: userpwd
+
+logging.level.root: info
