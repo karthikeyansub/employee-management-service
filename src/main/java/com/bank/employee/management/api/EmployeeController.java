@@ -1,6 +1,6 @@
 package com.bank.employee.management.api;
 
-import ch.qos.logback.core.util.StringUtil;
+import com.bank.employee.management.domain.ApiSuccessResponse;
 import com.bank.employee.management.domain.EmployeeRequest;
 import com.bank.employee.management.exception.InputValidationException;
 import com.bank.employee.management.service.EmployeeService;
@@ -16,7 +16,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +47,6 @@ public class EmployeeController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
     public EmployeeResponse createEmployee(
             @RequestHeader("role") final String role,
             @Valid @RequestBody final EmployeeRequest employeeRequest) {
@@ -71,7 +69,6 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "System errors")
     })
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('USER')")
     public EmployeeResponse getEmployeeById(
             @Parameter(name = "id", description = "Employee Id") @PathVariable("id") final int employeeId) {
         log.info("Received request to get /employees/{}", employeeId);
@@ -93,7 +90,6 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "System errors")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
     public EmployeeResponse updateEmployee(
             @Parameter(in = PATH, name = "id", description = "Employee Id") @PathVariable("id") final int employeeId,
             @Parameter(in = HEADER, name = "role", description = "Role") @RequestHeader("role") final String role,
@@ -117,8 +113,7 @@ public class EmployeeController {
             @ApiResponse(responseCode = "500", description = "System errors")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String deleteEmployee(
+    public ApiSuccessResponse deleteEmployee(
             @Parameter(name = "id", description = "Employee Id") @PathVariable("id") final int employeeId) {
         log.info("Received request to delete /employees/{}", employeeId);
 
@@ -126,9 +121,6 @@ public class EmployeeController {
     }
 
     private void validateRole(final String role) {
-        if(StringUtil.isNullOrEmpty(role)) {
-            throw new InputValidationException("Role is null or empty");
-        }
         int roleLength = role.length();
         if(roleLength < 3 || roleLength > 50) {
             throw new InputValidationException("Role length should be between 3 to 50 characters");

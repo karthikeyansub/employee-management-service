@@ -1,5 +1,6 @@
 package com.bank.employee.management.service;
 
+import com.bank.employee.management.domain.ApiSuccessResponse;
 import com.bank.employee.management.domain.EdsEmployeeRequest;
 import com.bank.employee.management.domain.EmployeeRequest;
 import com.bank.employee.management.domain.EmployeeResponse;
@@ -95,7 +96,7 @@ class EmployeeServiceTest {
         void testUpdateEmployee_ShouldReturnUpdatedEmployee() {
             when(mockEmployeeMapper.mapEmployeeRequestToEdsEmployeeRequest(any(EmployeeRequest.class)))
                     .thenReturn(getEdsEmployeeRequest());
-            when(mockEdsClient.updateEmployee(any(EdsEmployeeRequest.class), anyInt()))
+            when(mockEdsClient.updateEmployee(anyInt(), any(EdsEmployeeRequest.class)))
                     .thenReturn(getEmployeeResponse());
 
             EmployeeResponse response = classUnderTest.updateEmployee(1, getEmployeeRequest());
@@ -108,12 +109,12 @@ class EmployeeServiceTest {
         @Test
         void testDeleteEmployeeById_ShouldDeleteEmployeeAndReturnMessage() {
             when(mockEdsClient.deleteEmployeeById(anyInt()))
-                    .thenReturn(ResponseEntity.ok("Employee delete successfully"));
+                    .thenReturn(ResponseEntity.ok(new ApiSuccessResponse("Employee delete successfully")));
 
-            String response = classUnderTest.deleteEmployeeById(1);
+            ApiSuccessResponse response = classUnderTest.deleteEmployeeById(1);
 
             assertNotNull(response);
-            assertEquals("Employee delete successfully", response);
+            assertEquals("Employee delete successfully", response.message());
         }
     }
 

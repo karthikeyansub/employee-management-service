@@ -1,5 +1,6 @@
 package com.bank.employee.management.service;
 
+import com.bank.employee.management.domain.ApiSuccessResponse;
 import com.bank.employee.management.domain.EmployeeRequest;
 import com.bank.employee.management.mapper.EmployeeMapper;
 import com.bank.employee.management.service.client.EdsClient;
@@ -48,15 +49,15 @@ public class EmployeeService {
         EdsEmployeeRequest edsEmployeeRequest = employeeMapper.mapEmployeeRequestToEdsEmployeeRequest(employeeRequest);
         log.debug("Update employee request - {}", edsEmployeeRequest);
 
-        ResponseEntity<EmployeeResponse> response = edsClient.updateEmployee(edsEmployeeRequest, employeeId);
+        ResponseEntity<EmployeeResponse> response = edsClient.updateEmployee(employeeId, edsEmployeeRequest);
         log.debug("Updated employee response - {}", response.getBody());
 
         return response.getBody();
     }
 
     @Retryable(retryFor = RetryableException.class, backoff = @Backoff(delay = 100))
-    public String deleteEmployeeById(final Integer employeeId) {
-        ResponseEntity<String> response = edsClient.deleteEmployeeById(employeeId);
+    public ApiSuccessResponse deleteEmployeeById(final Integer employeeId) {
+        ResponseEntity<ApiSuccessResponse> response = edsClient.deleteEmployeeById(employeeId);
         log.debug("Deleted employee response - {}", response.getBody());
 
         return response.getBody();

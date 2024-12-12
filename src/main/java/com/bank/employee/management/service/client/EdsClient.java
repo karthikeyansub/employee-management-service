@@ -1,5 +1,6 @@
 package com.bank.employee.management.service.client;
 
+import com.bank.employee.management.domain.ApiSuccessResponse;
 import com.bank.employee.management.domain.EdsEmployeeRequest;
 import com.bank.employee.management.domain.RoleResponse;
 import com.bank.employee.management.domain.EmployeeResponse;
@@ -19,14 +20,13 @@ public interface EdsClient {
     ResponseEntity<EmployeeResponse> getEmployeeById(
             @PathVariable final Integer id);
 
-    @PutMapping(value = "/api/employees/{id}")
+    @PutMapping(value = "/api/employees/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<EmployeeResponse> updateEmployee(
-            @RequestBody final EdsEmployeeRequest employeeRequest,
-            @PathVariable final Integer id
-            );
+            @PathVariable final Integer id,
+            @RequestBody final EdsEmployeeRequest employeeRequest);
 
     @DeleteMapping(value = "/api/employees/{id}")
-    ResponseEntity<String> deleteEmployeeById(
+    ResponseEntity<ApiSuccessResponse> deleteEmployeeById(
             @PathVariable final Integer id);
 
     @GetMapping(value = "/api/roles/{roleName}")

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -41,8 +42,8 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(processFieldErrors(fieldErrors));
     }
 
-    @ExceptionHandler(InputValidationException.class)
-    public ResponseEntity<ApiErrorResponse> handleInputValidationException(final InputValidationException exception) {
+    @ExceptionHandler({InputValidationException.class, MissingRequestHeaderException.class})
+    public ResponseEntity<ApiErrorResponse> handleInputValidationException(final Exception exception) {
         log.warn("Input validation exception - {}", exception.getMessage());
         return ResponseEntity.badRequest().body(new ApiErrorResponse(BAD_REQUEST.name(), exception.getMessage(), null));
     }
