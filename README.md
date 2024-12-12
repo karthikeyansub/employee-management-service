@@ -13,6 +13,13 @@ This service will perform employee create, view, update and delete based on the 
 ### Run application
     - Use 'java -jar .\employee-management-service-0.0.1.jar' from the jar file location.
 
+### Run application using docker
+
+#### Build
+    - docker build -t ems_app_image .
+#### Run
+    - docker run -d -p 8088:8080 ems-app-image
+
 ### Test API using Swagger UI
     - Use swagger to test the API's - http://localhost:8080/swagger-ui/index.html.
 
@@ -25,3 +32,5 @@ Refer the Database service for instruction: [README.md](https://github.com/karth
 
 ## Test results:
 ![img.png](img.png)
+
+
