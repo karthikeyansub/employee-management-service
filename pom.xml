@@ -17,6 +17,7 @@
 		<java.version>17</java.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<spring-cloud.verion>2023.0.2</spring-cloud.verion>
+		<wiremock-standalone.version>2.27.2</wiremock-standalone.version>
 	</properties>
 
 	<dependencyManagement>
@@ -93,6 +94,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-jre8-standalone</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

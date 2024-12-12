@@ -1,0 +1,18 @@
+basicauth:
+  config:
+    - username: admin
+      role: ADMIN
+      password: adminpwd
+    - username: user
+      role: USER
+      password: userpwd
+
+spring:
+  mvc.favicon.enabled: false
+
+eds:
+  url: http://localhost:8081
+  username: employee_app
+  password: password
+
+logging.level.root: info
