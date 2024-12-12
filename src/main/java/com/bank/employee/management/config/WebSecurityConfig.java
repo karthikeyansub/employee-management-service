@@ -1,9 +1,7 @@
 package com.bank.employee.management.config;
 
-import com.bank.employee.management.domain.security.UserAccount;
 import com.bank.employee.management.domain.security.UserAccountListProperties;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,14 +32,14 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChainForTest(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(requests -> requests
-                    .requestMatchers(antMatcher(HttpMethod.GET, "/employees/**")).hasRole(USER)
-                    .requestMatchers(antMatcher(HttpMethod.POST, "/employees")).hasRole(ADMIN)
-                    .requestMatchers(antMatcher(HttpMethod.PUT, "/employees/**")).hasRole(USER)
-                    .requestMatchers(antMatcher(HttpMethod.DELETE, "/employees/**")).hasRole(ADMIN)
                     .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
                     .requestMatchers(antMatcher("/v3/api-docs/**")).permitAll()
                     .requestMatchers(antMatcher(HttpMethod.GET, "/actuator/**")).permitAll()
                     .requestMatchers(antMatcher(HttpMethod.OPTIONS, "/**")).permitAll()
+                    .requestMatchers(antMatcher(HttpMethod.GET, "/employees/**")).hasRole(USER)
+                    .requestMatchers(antMatcher(HttpMethod.POST, "/employees")).hasRole(ADMIN)
+                    .requestMatchers(antMatcher(HttpMethod.PUT, "/employees/**")).hasRole(USER)
+                    .requestMatchers(antMatcher(HttpMethod.DELETE, "/employees/**")).hasRole(ADMIN)
                     .anyRequest().denyAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(httpSecurityHttpBasicConfigurer ->

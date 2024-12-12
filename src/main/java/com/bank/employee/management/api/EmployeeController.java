@@ -8,6 +8,8 @@ import com.bank.employee.management.service.RoleService;
 import com.bank.employee.management.domain.EmployeeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -17,6 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.HEADER;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 
 @RestController
 @Slf4j
@@ -30,7 +35,11 @@ public class EmployeeController {
     private RoleService roleService;
 
     @Operation(summary = "Create new employee",
-            description = " This API will create new employee and return employee details.")
+            description = " This API will create new employee and return employee details.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Employee data to create",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = EmployeeRequest.class))))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns employee details"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -44,9 +53,8 @@ public class EmployeeController {
             @RequestHeader("role") final String role,
             @Valid @RequestBody final EmployeeRequest employeeRequest) {
         log.info("Received request to create /employees");
-        if(StringUtil.isNullOrEmpty(role)) {
-            throw new InputValidationException("Role is missing in the header");
-        }
+
+        validateRole(role);
 
         Integer roleId = roleService.getRoleIdByName(role);
         employeeRequest.setRoleId(roleId);
@@ -58,6 +66,7 @@ public class EmployeeController {
             description = " This API will return employee details.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns employee details"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized request"),
             @ApiResponse(responseCode = "404", description = "Employee not found"),
             @ApiResponse(responseCode = "500", description = "System errors")
     })
@@ -71,7 +80,11 @@ public class EmployeeController {
     }
 
     @Operation(summary = "Update employee",
-            description = " This API will update employee and return employee details with the updated information.")
+            description = " This API will update employee and return employee details with the updated information.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Employee data to update",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = EmployeeRequest.class))))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns employee details"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -82,14 +95,12 @@ public class EmployeeController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public EmployeeResponse updateEmployee(
-            @Parameter(name = "id", description = "Employee Id") @PathVariable("id") final int employeeId,
-            @RequestHeader("role") final String role,
+            @Parameter(in = PATH, name = "id", description = "Employee Id") @PathVariable("id") final int employeeId,
+            @Parameter(in = HEADER, name = "role", description = "Role") @RequestHeader("role") final String role,
             @Valid @RequestBody final EmployeeRequest employeeRequest) {
         log.info("Received request to update /employees/{}", employeeId);
 
-        if(StringUtil.isNullOrEmpty(role)) {
-            throw new InputValidationException("Role is missing in the header");
-        }
+        validateRole(role);
 
         Integer roleId = roleService.getRoleIdByName(role);
         employeeRequest.setRoleId(roleId);
@@ -112,5 +123,15 @@ public class EmployeeController {
         log.info("Received request to delete /employees/{}", employeeId);
 
         return employeeService.deleteEmployeeById(employeeId);
+    }
+
+    private void validateRole(final String role) {
+        if(StringUtil.isNullOrEmpty(role)) {
+            throw new InputValidationException("Role is null or empty");
+        }
+        int roleLength = role.length();
+        if(roleLength < 3 || roleLength > 50) {
+            throw new InputValidationException("Role length should be between 3 to 50 characters");
+        }
     }
 }
